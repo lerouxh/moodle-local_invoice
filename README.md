@@ -92,8 +92,8 @@ License Key and Upgrading
 
 Support
 -------
-- For documentation, updates, and support, please contact support@elso.co.za or visit the project repository.
-- eLearn Solutions offers paid support and customisation for this plugin and other Moodle services. https://elearnsolutions.co.za
+- For documentation, updates, and support, please contact support@elso.co.za or visit the project repository - https://github.com/lerouxh/moodle-local_invoice.git
+- eLearn Solutions offers paid support and customisation for this plugin and other Moodle services - https://elearnsolutions.co.za
 
 License
 -------
