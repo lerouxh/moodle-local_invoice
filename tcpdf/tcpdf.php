@@ -4941,6 +4941,9 @@ class TCPDF {
 
 	/**
 	 * Embed the attached files.
+		 *
+		 * @param array $opt Annotation options array (must include 'Subtype' and either 'FS' or embedded data).
+		 * @return void
 	 * @since 6.9.000 (2025-02-11)
 	 * @public
 	 */
@@ -4956,6 +4959,10 @@ class TCPDF {
 
 	/**
 	 * Embed the attached files.
+		 *
+		 * @param string $filename The filename to use inside the PDF.
+		 * @param string $content The file contents.
+		 * @return void
 	 * @since 6.9.000 (2025-02-11)
 	 * @public
 	 */

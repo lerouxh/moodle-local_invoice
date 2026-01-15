@@ -35,6 +35,9 @@ if (!function_exists('local_invoice_prefix_for_storage')) {
     /**
      * Prefix stored in DB and printed on invoice.
      * Keep empty string if not configured (FREE invoices typically had no printed prefix).
+	     *
+	     * @param string $prefix The raw prefix configured in plugin settings.
+	     * @return string The safe prefix to store on invoice records (may be empty).
      */
     function local_invoice_prefix_for_storage(string $prefix): string {
         $prefix = trim($prefix);
@@ -48,6 +51,9 @@ if (!function_exists('local_invoice_prefix_for_filename')) {
     /**
      * Prefix used in the PDF filename.
      * Legacy behaviour: if stored prefix is empty, filename still uses "Invoice-" as technical prefix.
+	     *
+	     * @param string|null $storedprefix The prefix stored on the invoice record (may be null).
+	     * @return string The safe prefix to use in filenames.
      */
     function local_invoice_prefix_for_filename(?string $storedprefix): string {
         $prefix = trim((string)$storedprefix);

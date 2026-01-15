@@ -14,41 +14,53 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version
+ * Hide the admin-only invoice settings custom-menu item for non-admin users.
+ *
  * @package    local_invoice
  * @copyright  2026 eLearn Solutions
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
-// local/invoice/js/hide_admin_menu.js
 
-(function () {
-    function textIncludes(el, needle) {
-        if (!el) { return false; }
-        var t = (el.textContent || "").trim().toLowerCase();
-        return t.indexOf(needle.toLowerCase()) !== -1;
-    }
+(function() {
+    /**
+     * Check whether an element's visible text contains a given string.
+     *
+     * @param {HTMLElement|null} el The element to inspect.
+     * @param {String} needle The text to look for.
+     * @returns {Boolean} True if found, false otherwise.
+     */
+    const textIncludes = (el, needle) => {
+        if (!el) {
+            return false;
+        }
 
-    function hideInvoicesAdminsMenu() {
-        var needleHref = "/admin/settings.php?section=local_invoice_settings";
-        var links = document.querySelectorAll('a[href*="' + needleHref + '"]');
+        const t = (el.textContent || '').trim().toLowerCase();
+        return t.includes(String(needle).toLowerCase());
+    };
 
-        links.forEach(function (a) {
+    /**
+     * Hide the "Invoices (admins)" block (or the settings link as a fallback).
+     */
+    const hideInvoicesAdminsMenu = () => {
+        const needleHref = '/admin/settings.php?section=local_invoice_settings';
+        const links = document.querySelectorAll(`a[href*="${needleHref}"]`);
+
+        links.forEach((a) => {
             // Try to find the top-level menu <li> that contains the "Invoices (admins)" label.
-            var li = a.closest("li");
-            if (li && textIncludes(li, "Invoices (admins)")) {
-                li.style.display = "none";
+            const li = a.closest('li');
+            if (li && textIncludes(li, 'Invoices (admins)')) {
+                li.style.display = 'none';
                 return;
             }
 
             // Fallback: hide just the link (prevents hiding other menus like "My invoices").
-            a.style.display = "none";
+            a.style.display = 'none';
         });
-    }
+    };
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", hideInvoicesAdminsMenu);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hideInvoicesAdminsMenu);
     } else {
         hideInvoicesAdminsMenu();
     }
-})();
+}());

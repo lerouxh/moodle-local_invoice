@@ -2502,7 +2502,7 @@ class TCPDF_STATIC {
 
 	/**
 	 * Get page dimensions from format name.
-	 * @param mixed $format The format name @see self::$page_format<ul>
+		 * @param mixed $format The format name (see self::$page_formats).
 	 * @return array containing page width and height in points
 	 * @since 5.0.010 (2010-05-17)
 	 * @public static

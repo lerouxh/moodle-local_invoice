@@ -20,7 +20,7 @@
  * @copyright  2026 eLearn Solutions
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 // local/invoice/db/uninstall.php
 
 defined('MOODLE_INTERNAL') || die();
@@ -129,6 +129,10 @@ function xmldb_local_invoice_uninstall(): bool {
  * Create archive tables (if missing) and copy invoice history into them.
  *
  * Archive tables are intentionally NOT listed in install.xml so they survive uninstall.
+ *
+ * @param moodle_database $DB The Moodle database handle.
+ * @param database_manager $dbman The Moodle database manager.
+ * @return void
  */
 function local_invoice_archive_before_uninstall(moodle_database $DB, database_manager $dbman): void {
     // Only archive if the live tables exist.
@@ -182,6 +186,9 @@ function local_invoice_archive_before_uninstall(moodle_database $DB, database_ma
 /**
  * Ensure archive tables exist with a schema compatible with current plugin data.
  * Includes invoiceprefix for forward-compatibility with your planned upgrades.
+ *
+ * @param database_manager $dbman The Moodle database manager.
+ * @return void
  */
 function local_invoice_ensure_archive_tables(database_manager $dbman): void {
     // ---------------------------------------------------------------------

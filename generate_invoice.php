@@ -47,6 +47,9 @@ if (!function_exists('local_invoice_prefix_for_filename')) {
      * Prefix used in the PDF filename.
      * IMPORTANT: Legacy behaviour — if stored prefix is empty, use "Invoice-" as TECHNICAL prefix
      * so previously-generated FREE invoices are still found and not duplicated.
+	     *
+	     * @param string|null $storedprefix The prefix stored on the invoice record (may be null).
+	     * @return string The safe prefix to use in filenames.
      */
     function local_invoice_prefix_for_filename(?string $storedprefix): string {
         $prefix = trim((string)$storedprefix);

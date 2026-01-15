@@ -20,7 +20,7 @@
  * @copyright  2026 eLearn Solutions
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- 
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -40,6 +40,9 @@ function xmldb_local_invoice_install() {
         /**
          * Restore archived data into live plugin tables if (and only if) live tables are empty.
          * Leaves archives in place unless a full restore succeeds, in which case it drops them.
+	     *
+	     * @param moodle_database $DB The Moodle database handle.
+	     * @return void
          */
         function local_invoice_restore_from_archive(moodle_database $DB): void {
             $dbman = $DB->get_manager();
