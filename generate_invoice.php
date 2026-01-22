@@ -27,6 +27,7 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once(__DIR__ . '/lib.php');
 require_login();
 
 global $DB, $CFG, $USER;
@@ -93,6 +94,12 @@ if (!empty($cfg->province))   { $companyaddr[] = $cfg->province; }
 if (!empty($cfg->postalcode)) { $companyaddr[] = $cfg->postalcode; }
 $taxnumber = !empty($cfg->taxnumber) ? s($cfg->taxnumber) : '';
 
+// Pro gating: if Pro is not active, never render Pro-only elements.
+$proactive = local_invoice_is_pro_active();
+if (!$proactive) {
+    $taxnumber = '';
+}
+
 // Company block (line per part)
 $companyaddrstr = implode("\n", array_map('s', $companyaddr));
 
@@ -115,6 +122,11 @@ $total_incl = round((float)$inv->cost, 2);
 
 // Tax display toggle (default OFF -> total only, no VAT maths/fields).
 $showtaxbreakdown = (bool)get_config('local_invoice', 'showtaxbreakdown');
+
+// Pro gating: no VAT breakdown when Pro is not active.
+if (!$proactive) {
+    $showtaxbreakdown = false;
+}
 
 // Defaults for printing
 $vatpercent_display = '';
@@ -149,16 +161,18 @@ $total_str       = number_format($total_display, 2, '.', ' ');
 $subtotal_str    = ($showtaxbreakdown ? number_format((float)$subtotal_display, 2, '.', ' ') : '');
 $vat_amount_str  = ($showtaxbreakdown ? number_format((float)$vat_amount_display, 2, '.', ' ') : '');
 
-// Optional company logo from file area local_invoice/companylogo
+// Optional company logo from file area local_invoice/companylogo (Pro only).
 $companylogo = '';
 $fs = get_file_storage();
 $sysctx = context_system::instance();
-$files = $fs->get_area_files($sysctx->id, 'local_invoice', 'companylogo', 0, 'itemid, filepath, filename', false);
-if ($files) {
-    $file = reset($files);
-    $logotemp = tempnam(sys_get_temp_dir(), 'logo');
-    file_put_contents($logotemp, $file->get_content());
-    $companylogo = $logotemp;
+if ($proactive) {
+    $files = $fs->get_area_files($sysctx->id, 'local_invoice', 'companylogo', 0, 'itemid, filepath, filename', false);
+    if ($files) {
+        $file = reset($files);
+        $logotemp = tempnam(sys_get_temp_dir(), 'logo');
+        file_put_contents($logotemp, $file->get_content());
+        $companylogo = $logotemp;
+    }
 }
 
 // Build PDF using your original absolute positions / background
@@ -171,8 +185,9 @@ $pdf->SetMargins(0, 0, 0, true);
 $pdf->SetAutoPageBreak(false, 0);
 $pdf->AddPage();
 
-// Background template
-$template = __DIR__ . '/invoice_template.png';
+// Background template.
+// NOTE: stored with an unobvious name (still a PNG internally). This is a deterrent only.
+$template = __DIR__ . '/assets/invoice_bg';
 if (file_exists($template)) {
     $pdf->Image($template, 0, 0, 210, 297, 'PNG');
 }
@@ -238,6 +253,24 @@ $pdf->Cell(32, 7, $currencysymbol . ' ' . $total_str, 0, 2, 'R');
 $pdf->SetFont('helvetica', '', 10);
 $pdf->SetXY(15, 169);
 $pdf->Cell(40, 8, $paymentmethod, 0, 0, 'L');
+
+// Free-version watermark (deterrent).
+// Use a PNG image stored without an extension (assets/wm).
+if (!$proactive) {
+    $wm = __DIR__ . '/assets/wm';
+    if (file_exists($wm)) {
+        // Place near bottom with margins.
+        // Scale by width (190mm) and preserve aspect ratio.
+        $pdf->Image($wm, 20, 275, 170, 0, 'PNG');
+    } else {
+        // Fallback (should not happen): simple text watermark.
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->SetTextColor(160, 160, 160);
+        $pdf->SetXY(10, 286);
+        $pdf->MultiCell(190, 5, 'Invoice generation plugin provided by eLearn Solutions - www.elearnsolutions.co.za', 0, 'C');
+        $pdf->SetTextColor(0, 0, 0);
+    }
+}
 
 // Save into Private files and redirect back (no output before redirect)
 $ucontext = context_user::instance($userid);

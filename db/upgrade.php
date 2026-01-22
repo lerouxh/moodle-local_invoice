@@ -84,5 +84,35 @@ function xmldb_local_invoice_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026010901, 'local', 'invoice');
     }
 
+    // 2026011900: Cache Pro license validity locally (no remote calls during normal operation).
+    // Originally stored as 'valid_until'.
+    if ($oldversion < 2026011900) {
+        $existing = get_config('local_invoice', 'valid_until');
+        if ($existing === false || $existing === null || trim((string)$existing) === '') {
+            set_config('valid_until', 'free', 'local_invoice');
+        }
+        upgrade_plugin_savepoint(true, 2026011900, 'local', 'invoice');
+    }
+
+    // 2026012200: Rename Pro validity cache key to a shorter name ('vu').
+    if ($oldversion < 2026012200) {
+        $old = get_config('local_invoice', 'valid_until');
+        $new = get_config('local_invoice', 'vu');
+
+        // If the new key is missing/empty, migrate from the old key.
+        if ($new === false || $new === null || trim((string)$new) === '') {
+            if ($old !== false && $old !== null && trim((string)$old) !== '') {
+                set_config('vu', (string)$old, 'local_invoice');
+            } else {
+                set_config('vu', 'free', 'local_invoice');
+            }
+        }
+
+        // Keep the old config for backwards compatibility if someone downgrades,
+        // but normal runtime code uses 'vu' going forward.
+
+        upgrade_plugin_savepoint(true, 2026012200, 'local', 'invoice');
+    }
+
     return true;
 }

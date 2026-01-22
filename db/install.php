@@ -20,7 +20,7 @@
  * @copyright  2026 eLearn Solutions
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+ 
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -30,6 +30,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_local_invoice_install() {
     global $DB;
+
+    // Ensure Pro validity cache exists (default: free mode).
+    // 'vu' = valid until.
+    if (get_config('local_invoice', 'vu') === false || get_config('local_invoice', 'vu') === null) {
+        set_config('vu', 'free', 'local_invoice');
+    }
 
     $dbman = $DB->get_manager();
 

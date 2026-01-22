@@ -24,9 +24,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/classes/admin_setting_prolicense.php');
+require_once(__DIR__ . '/lib.php');
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_invoice_settings', get_string('pluginname', 'local_invoice'));
+
+    // Always: show cached Pro license status (no remote calls).
+    $settings->add(new admin_setting_heading(
+        'local_invoice/licensestatus',
+        get_string('pro_license_status', 'local_invoice'),
+        local_invoice_pro_status_html()
+    ));
 
     // Always: License Key field.
     $settings->add(new local_invoice_admin_setting_prolicense_key(
@@ -67,13 +75,27 @@ if ($hassiteconfig) {
         PARAM_TEXT
     ));
 
-    // Check the license key value and conditionally add pro fields.
-    $licensekey = get_config('local_invoice', 'license_key');
-    $licensevalid = ($licensekey && $licensekey !== 'free'); // Key present and not 'free'
+    // Always: invoice numbering controls.
+    // - Starting number is allowed in Free.
+    // - Prefix is Pro-only.
+    $settings->add(new admin_setting_configtext(
+        'local_invoice/invoicestart',
+        get_string('invoicestart', 'local_invoice'),
+        get_string('invoicestart_desc', 'local_invoice'),
+        900001,
+        PARAM_INT
+    ));
 
-    if ($licensevalid) {
+    // Pro-only settings are visible only when the cached Pro validity is active.
+    if (local_invoice_is_pro_active()) {
+        $settings->add(new admin_setting_configtext(
+            'local_invoice/invoiceprefix',
+            get_string('invoiceprefix', 'local_invoice'),
+            get_string('invoiceprefix_desc', 'local_invoice'),
+            '',
+            PARAM_TEXT
+        ));
 
-        // Only add these fields if Pro is active.
         $settings->add(new local_invoice_admin_setting_prolicense_file(
             'local_invoice/companylogo',
             get_string('companylogo', 'local_invoice'),
@@ -89,23 +111,6 @@ if ($hassiteconfig) {
             PARAM_TEXT
         ));
 
-        $settings->add(new local_invoice_admin_setting_prolicense_text(
-            'local_invoice/invoiceprefix',
-            get_string('invoiceprefix', 'local_invoice'),
-            get_string('invoiceprefix_desc', 'local_invoice'),
-            '',
-            PARAM_TEXT
-        ));
-
-        $settings->add(new admin_setting_configtext(
-            'local_invoice/invoicestart',
-            get_string('invoicestart', 'local_invoice'),
-            get_string('invoicestart_desc', 'local_invoice'),
-            900001,
-            PARAM_INT
-        ));
-
-        // NEW (Pro): Tax display controls (default hides VAT breakdown).
         $settings->add(new admin_setting_heading(
             'local_invoice/taxsettings',
             get_string('taxsettings_heading', 'local_invoice'),

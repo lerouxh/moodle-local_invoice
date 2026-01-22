@@ -25,6 +25,7 @@ Unlock Pro features by purchasing a Pro license key:
 - Display your **company tax/VAT number** on invoices
 - Add a custom **invoice prefix** (e.g., INV-, 2025-, etc.)
 - Optional tax/VAT breakdown showing subtotal, tax/VAT, and total when enabled in settings.
+- Remove the **"Plugin provided by eLearn Solutions" watermark image** from generated invoices.
 
 Visit shop.elearnsolutions.co.za to purchase a Pro key to unlock these features. The Pro license key is validated remotely and can be changed in the plugin settings at any time.
 
@@ -32,8 +33,10 @@ Visit shop.elearnsolutions.co.za to purchase a Pro key to unlock these features.
 License Key Logic
 -----------------
 - By default, the plugin runs in "Free" mode—no license key needed.
-- To enable Pro features, enter a valid Pro license key (provided on purchase) in the settings page. This key is checked and validated with the remote licensing server.
-- Only the company logo, tax/VAT number, and invoice prefix require a Pro key; all other features are always available.
+- **Free mode invoices include a watermark image** at the bottom of generated invoices.
+- To enable Pro features, enter a valid Pro license key (provided on purchase) in the settings page. The key is validated with the remote licensing server.
+- **Pro keys are valid for 1 year (365 days) from activation.** After expiry, invoices are generated in Free mode (no logo, no tax/VAT number, no tax breakdown, and the watermark image returns).
+- Only the company logo, tax/VAT number, invoice prefix, and tax/VAT breakdown are Pro features; invoice numbering (starting number) remains available in Free mode.
 
 Requirements
 ------------

@@ -26,6 +26,6 @@ require_login();
 $PAGE->set_url(new moodle_url('/local/invoice/no_invoice.php'));
 $PAGE->set_context(context_system::instance());
 echo $OUTPUT->header();
-echo html_writer::tag('h3', 'No invoice available');
-echo html_writer::div('You have no course purchases via PayPal or Payfast.');
+echo html_writer::tag('h3', get_string('noinvoice_title', 'local_invoice'));
+echo html_writer::div(get_string('noinvoice_text', 'local_invoice'));
 echo $OUTPUT->footer();

@@ -20,7 +20,7 @@
  * @copyright  2026 eLearn Solutions
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+ 
 // local/invoice/db/uninstall.php
 
 defined('MOODLE_INTERNAL') || die();

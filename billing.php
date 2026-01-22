@@ -38,10 +38,9 @@ $PAGE->set_context($context);
 $PAGE->set_url(new moodle_url('/local/invoice/billing.php', ['return' => $return]));
 $PAGE->set_pagelayout('standard');
 
-$strm = get_string_manager();
-$pluginname = $strm->string_exists('pluginname', 'local_invoice') ? get_string('pluginname', 'local_invoice') : 'Invoices';
-$edittxt    = $strm->string_exists('edit', 'moodle') ? get_string('edit') : 'Edit';
-$PAGE->set_title($pluginname . ': ' . $edittxt);
+$pluginname = get_string('pluginname', 'local_invoice');
+$heading    = get_string('billing_heading', 'local_invoice');
+$PAGE->set_title($pluginname . ': ' . $heading);
 $PAGE->set_heading($pluginname);
 
 require_once($CFG->libdir . '/formslib.php');
@@ -49,14 +48,13 @@ require_once($CFG->libdir . '/formslib.php');
 class local_invoice_billing_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
-        $strm  = get_string_manager();
 
-        $label_company = $strm->string_exists('companyname', 'local_invoice') ? get_string('companyname', 'local_invoice') : 'Company / Billing name';
-        $label_vat     = $strm->string_exists('taxnumber', 'local_invoice') ? get_string('taxnumber', 'local_invoice') : 'VAT / Tax number';
-        $label_address = $strm->string_exists('address', 'local_invoice') ? get_string('address', 'local_invoice') : ( $strm->string_exists('address', 'moodle') ? get_string('address', 'moodle') : 'Address' );
-        $label_city    = $strm->string_exists('city', 'local_invoice') ? get_string('city', 'local_invoice') : ( $strm->string_exists('city', 'moodle') ? get_string('city', 'moodle') : 'City' );
-        $label_prov    = $strm->string_exists('province', 'local_invoice') ? get_string('province', 'local_invoice') : 'State / Province';
-        $label_post    = $strm->string_exists('postalcode', 'local_invoice') ? get_string('postalcode', 'local_invoice') : 'Postal code';
+        $label_company = get_string('billing_company', 'local_invoice');
+        $label_vat     = get_string('billing_vatnumber', 'local_invoice');
+        $label_address = get_string('billing_address', 'local_invoice');
+        $label_city    = get_string('billing_city', 'local_invoice');
+        $label_prov    = get_string('billing_province', 'local_invoice');
+        $label_post    = get_string('billing_postalcode', 'local_invoice');
 
         $mform->addElement('text', 'company', $label_company);
         $mform->setType('company', PARAM_TEXT);
@@ -80,8 +78,7 @@ class local_invoice_billing_form extends moodleform {
         $mform->addElement('hidden', 'return');
         $mform->setType('return', PARAM_LOCALURL);
 
-        $savectx = get_string_manager()->string_exists('savechanges', 'moodle') ? get_string('savechanges') : 'Save changes';
-        $this->add_action_buttons(true, $savectx);
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 }
 
@@ -114,7 +111,7 @@ if ($mform->is_cancelled()) {
             'timemodified'=> $now
         ];
         $DB->update_record('local_invoice_user', $update);
-        $flash = $strm->string_exists('changessaved', 'moodle') ? get_string('changessaved') : 'Changes saved';
+        $flash = get_string('changessaved');
     } else {
         $insert = (object)[
             'userid'      => $userid,
@@ -128,7 +125,7 @@ if ($mform->is_cancelled()) {
             'timemodified'=> $now
         ];
         $DB->insert_record('local_invoice_user', $insert);
-        $flash = $strm->string_exists('changessaved', 'moodle') ? get_string('changessaved') : 'Saved';
+        $flash = get_string('changessaved');
     }
 
     $notify = class_exists('\\core\\output\\notification') ? \core\output\notification::NOTIFY_SUCCESS : null;
@@ -139,15 +136,14 @@ if ($mform->is_cancelled()) {
 // From here on we may output safely.
 echo $OUTPUT->header();
 
-// Added permanent notice (your request).
-$regen = 'To regenerate an invoice, delete the pdf file in your Private files and click on the View invoices tab again. (Remember to click on Save after deleting the pdf file)';
-echo $OUTPUT->notification($regen, 'info');
+// Permanent notice (billing page helper).
+echo $OUTPUT->notification(get_string('billing_regenerate_note', 'local_invoice'), 'info');
 
 // Intro note only when first capturing.
 if (!$existing) {
-    echo $OUTPUT->notification('Please provide your billing details once. They will be used for all future invoices. You can return here to edit them at any time.', 'info');
+    echo $OUTPUT->notification(get_string('billing_intro_note', 'local_invoice'), 'info');
 }
 
-echo $OUTPUT->heading($edittxt);
+echo $OUTPUT->heading($heading);
 $mform->display();
 echo $OUTPUT->footer();

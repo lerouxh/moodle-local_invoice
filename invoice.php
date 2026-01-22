@@ -24,6 +24,7 @@
 // /local/invoice/invoice.php
 
 require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/lib.php');
 require_login();
 
 global $DB, $USER;
@@ -110,8 +111,9 @@ $cfgstart = (int) get_config('local_invoice', 'invoicestart');
 $cfgstart = $cfgstart > 0 ? $cfgstart : 900001;
 
 // 5) Read current configured prefix (this applies only to NEW invoices from now on).
+// Prefix is a Pro-only feature. Free mode always issues invoices with an empty stored prefix.
 $cfgprefix = (string) get_config('local_invoice', 'invoiceprefix');
-$seriesprefix = local_invoice_prefix_for_storage($cfgprefix);
+$seriesprefix = local_invoice_is_pro_active() ? local_invoice_prefix_for_storage($cfgprefix) : '';
 
 // Cache next numbers per prefix series for this request (efficient if multiple invoices created).
 $nextByPrefix = [];
