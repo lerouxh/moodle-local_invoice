@@ -24,7 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_invoice';  // Full name of the plugin (used for diagnostics).
-$plugin->version = 2026012202;  // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version = 2026012300;  // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires = 2023100900.00;    // Moodle 4.3
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '1.0.4';
